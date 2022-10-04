@@ -93,7 +93,7 @@ endfunction
 " It's appropriate when running in a raw terminal that supports OSC 52.
 function! s:get_OSC52(str)
   let b64 = s:b64encode(a:str, 0)
-  return "\e]52;c;" . b64 . "\x07"
+  return "\e]52;p;" . b64 . "\x07"
 endfunction
 
 " This function base64's the entire string and wraps it in a single OSC52 for
@@ -101,7 +101,7 @@ endfunction
 " This is for `tmux` sessions which filters OSC52 locally.
 function! s:get_OSC52_tmux(str)
   let b64 = s:b64encode(a:str, 0)
-  return "\ePtmux;\e\e]52;c;" . b64 . "\x07\e\\"
+  return "\ePtmux;\e\e]52;p;" . b64 . "\x07\e\\"
 endfunction
 
 " This function base64's the entire source, wraps it in a single OSC52, and then
@@ -121,14 +121,14 @@ function! s:get_OSC52_DCS(str)
   " there should be a better way.)
   let b64 = substitute(b64, '/', '\', 'g')
   " Now wrap the whole thing in <start-dcs><start-osc52>...<end-osc52><end-dcs>.
-  return "\eP\e]52;c;" . b64 . "\x07\e\x5c"
+  return "\eP\e]52;p;" . b64 . "\x07\e\x5c"
 endfunction
 
 " Kitty versions below 0.22.0 require the clipboard to be flushed before
 " accepting a new string.
 " https://sw.kovidgoyal.net/kitty/changelog/#id33
 function! s:get_OSC52_kitty(str)
-  call s:raw_echo("\e]52;c;!\x07")
+  call s:raw_echo("\e]52;p;!\x07")
   return s:get_OSC52(a:str)
 endfunction
 
